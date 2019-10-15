@@ -7,8 +7,8 @@ const supertest = require('supertest')
 const request = supertest(app)
 
 beforeAll(async () => {
-    const url = 'mongodb://localhost/test'
-    await mongoose.connect(url, { useUnifiedTopology: true, useNewUrlParser: true })
+    const url = ''
+    await mongoose.connect('mongodb://localhost/mydb_test', { useUnifiedTopology: true, useNewUrlParser: true })
 })
 afterEach(async () => {
     await User.deleteMany()

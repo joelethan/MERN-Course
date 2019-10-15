@@ -14,9 +14,10 @@ app.use(bodyParser.urlencoded({extended: false}))
 app.use(bodyParser.json())
 
 // Connect to db
-console.log(process.env.connectionString);
+url_ = process.env.connectionString || 'mongodb://localhost/db1'
+console.log(url_);
 
-mongoose.connect(process.env.connectionString, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(url_, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(()=>console.log('MongoDB Connected'))
     .catch(err => console.log(err))
 

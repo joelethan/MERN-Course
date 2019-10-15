@@ -81,7 +81,8 @@ router.post('/login', (req, res)=>{
                 .then(isMatch=>{
                     if(isMatch){
                         const payload = {id: user.id, name: user.name, avatar: user.avatar}
-                        jwt.sign(payload, process.env.secretOrKey, { expiresIn: 3600 }, (er, token)=>{
+                        const secretOrKey = process.env.secretOrKey || 'key'
+                        jwt.sign(payload, secretOrKey, { expiresIn: 3600 }, (er, token)=>{
                             res.json({
                                 success: true,
                                 token: 'Bearer ' + token
