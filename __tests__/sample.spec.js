@@ -7,7 +7,7 @@ const supertest = require('supertest')
 const request = supertest(app)
 
 beforeAll(async () => {
-    const url = `mongodb://localhost/${databaseName}`
+    const url = 'mongodb://localhost/test'
     await mongoose.connect(url, { useUnifiedTopology: true, useNewUrlParser: true })
 })
 afterEach(async () => {
