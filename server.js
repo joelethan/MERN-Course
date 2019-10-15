@@ -26,10 +26,10 @@ app.use(passport.initialize());
 // Passport Config
 require('./config/passport')(passport);
 
-app.get('/', (req, res)=> res.send('Hello world!!'))
+app.get('/', (req, res)=> res.json({msg: 'Hello world!!'}))
 
 // Use routes
 app.use('/api/user', user)
 app.use('/api/profile', profile)
 
-app.listen(5000, ()=>console.log('Listening to port 5000'))
+module.exports = app
