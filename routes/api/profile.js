@@ -6,12 +6,14 @@ const passport = require('passport')
 // Load profile and User models
 const Profile = require('../../models/Profile')
 const User = require('../../models/User')
+const validateProfileInput = require('../../validation/profile')
 
 router.get('/', (req, res)=>res.json({msg: 'Profile working'}))
 
 // Get current user's profile
 router.get('/profile', passport.authenticate('jwt', { session: false }), (req, res)=> {
     Profile.findOne({ user: req.user.id })
+        .populate('user', ['name', 'avatar'])
         .then(profile => {
             let errors = {}
             if(!profile){
@@ -25,6 +27,12 @@ router.get('/profile', passport.authenticate('jwt', { session: false }), (req, r
 
 // Create/Update User profile
 router.post('/profile', passport.authenticate('jwt', { session: false }), (req, res)=> {
+    const { errors, isValid } = validateProfileInput(req.body)
+
+    if(!isValid){
+        // Return errors
+        return res.status(400).json(errors)
+    }
     const profileFields = {}
     profileFields.user = req.user.id
     if(req.body.handle) profileFields.handle = req.body.handle;
@@ -46,10 +54,11 @@ router.post('/profile', passport.authenticate('jwt', { session: false }), (req, 
         .then(profile => {
             if(profile){
                 // Profile Update
+                mongoose.set('useFindAndModify', false);
                 Profile.findOneAndUpdate(
                     { user: req.user.id },
                     { $set: profileFields },
-                    { new:true  })
+                    { new: true  })
                     .then(profile => res.json(profile))
             } else {
                 // Create Profile

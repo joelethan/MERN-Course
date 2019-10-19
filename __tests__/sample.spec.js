@@ -48,7 +48,6 @@ it('Should register a new user', async done => {
         password: 'password'
       })
     expect(res.status).toBe(200)
-    console.log(res.body);
     expect(res.body.success).toBe(true);
     done()
   })
