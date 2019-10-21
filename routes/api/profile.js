@@ -111,4 +111,21 @@ router.get('/user/:user_id', (req, res)=>{
     })
 })
 
+// Get all profiles
+router.get('/all', (req, res)=>{
+    Profile.find()
+    .populate('user', ['name', 'avatar'])
+    .then(profiles => {
+        let errors = {}
+        if(!profiles){
+            errors.noprofile = 'There is no profile for this user'
+            return res.status(404).json(errors)
+        }
+        res.json(profiles)
+    })
+    .catch(err => {
+        res.status(404).json({noprofile: 'There is no profiles'})
+    })
+})
+
 module.exports = router;
