@@ -8,10 +8,10 @@ const Profile = require('../../models/Profile')
 const User = require('../../models/User')
 const validateProfileInput = require('../../validation/profile')
 
-router.get('/', (req, res)=>res.json({msg: 'Profile working'}))
+router.get('/test', (req, res)=>res.json({msg: 'Profile working'}))
 
 // Get current user's profile
-router.get('/profile', passport.authenticate('jwt', { session: false }), (req, res)=> {
+router.get('/', passport.authenticate('jwt', { session: false }), (req, res)=> {
     Profile.findOne({ user: req.user.id })
         .populate('user', ['name', 'avatar'])
         .then(profile => {
@@ -26,7 +26,7 @@ router.get('/profile', passport.authenticate('jwt', { session: false }), (req, r
 })
 
 // Create/Update User profile
-router.post('/profile', passport.authenticate('jwt', { session: false }), (req, res)=> {
+router.post('/', passport.authenticate('jwt', { session: false }), (req, res)=> {
     const { errors, isValid } = validateProfileInput(req.body)
 
     if(!isValid){
@@ -78,5 +78,20 @@ router.post('/profile', passport.authenticate('jwt', { session: false }), (req, 
                     }
                 })
             })
+
+// Get profile by handle
+router.get('/handle/:handle', (req, res)=>{
+    Profile.findOne({ handle: req.params.handle })
+    .populate('user', ['name', 'avatar'])
+    .then(profile => {
+        let errors = {}
+        if(!profile){
+            errors.noprofile = 'There is no profile for this user'
+            return res.status(404).json(errors)
+        }
+        res.json(profile)
+    })
+    .catch(err => res.status(404).json(err))
+})
 
 module.exports = router;
