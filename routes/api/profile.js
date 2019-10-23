@@ -75,7 +75,7 @@ router.post('/', passport.authenticate('jwt', { session: false }), (req, res)=> 
                         let errors = {}
                         if(profile){
                             errors.handle = 'Handle already exists';
-                            res.status(400).json(errors)
+                            return res.status(400).json(errors)
                         }
                         new Profile(profileFields).save()
                             .then(profile => {
@@ -192,6 +192,22 @@ router.post('/education', passport.authenticate('jwt', { session: false }), (req
         profile.save()
             .then(profile => res.json(profile))
         })
+})
+
+// Delete experience from the profile
+// api/profile/experience/exp_id
+router.delete('/experience/:exp_id', passport.authenticate('jwt', { session: false }), (req, res)=> {
+
+    Profile.findOne({ user: req.user.id }).then(profile => {
+        const removeIndex = profile.experiences
+            .map(item => item.id)
+            .indexOf(req.params.exp_id)
+        if(removeIndex === -1) return res.status(404).json({experience: "Not found"})
+        profile.experiences.splice(removeIndex, 1)
+        profile.save()
+            .then(profile => res.json(profile))
+            .catch(err => res.status(404).json(err))
+    })
 })
 
 module.exports = router;
