@@ -210,4 +210,20 @@ router.delete('/experience/:exp_id', passport.authenticate('jwt', { session: fal
     })
 })
 
+// Delete education from the profile
+// api/profile/education/edu_id
+router.delete('/education/:edu_id', passport.authenticate('jwt', { session: false }), (req, res)=> {
+
+    Profile.findOne({ user: req.user.id }).then(profile => {
+        const removeIndex = profile.education
+            .map(item => item.id)
+            .indexOf(req.params.edu_id)
+        if(removeIndex === -1) return res.status(404).json({education: "Not found"})
+        profile.education.splice(removeIndex, 1)
+        profile.save()
+            .then(profile => res.json(profile))
+            .catch(err => res.status(404).json(err))
+    })
+})
+
 module.exports = router;
