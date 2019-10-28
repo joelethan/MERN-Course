@@ -3,6 +3,7 @@ const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 const user = require('./routes/api/user')
 const profile = require('./routes/api/profile')
+const post = require('./routes/api/post')
 const passport = require('passport')
 
 require('dotenv').config()
@@ -32,5 +33,6 @@ app.get('/', (req, res)=> res.json({msg: 'Hello world!!'}))
 // Use routes
 app.use('/api/user', user)
 app.use('/api/profile', profile)
+app.use('/api/post', post)
 
 module.exports = app
