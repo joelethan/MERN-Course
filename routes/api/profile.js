@@ -12,10 +12,12 @@ const validateEducationInput = require('../../validation/education')
 
 // Test route
 // api/profile/test
+// public route
 router.get('/test', (req, res)=>res.json({msg: 'Profile working'}))
 
 // Get current user's profile
 // api/profile
+// private route
 router.get('/', passport.authenticate('jwt', { session: false }), (req, res)=> {
     Profile.findOne({ user: req.user.id })
         .populate('user', ['name', 'avatar'])
@@ -32,6 +34,7 @@ router.get('/', passport.authenticate('jwt', { session: false }), (req, res)=> {
 
 // Create/Update User profile
 // api/profile
+// private route
 router.post('/', passport.authenticate('jwt', { session: false }), (req, res)=> {
     const { errors, isValid } = validateProfileInput(req.body)
 
@@ -75,7 +78,7 @@ router.post('/', passport.authenticate('jwt', { session: false }), (req, res)=> 
                         let errors = {}
                         if(profile){
                             errors.handle = 'Handle already exists';
-                            res.status(400).json(errors)
+                            return res.status(400).json(errors)
                         }
                         new Profile(profileFields).save()
                             .then(profile => {
@@ -88,6 +91,7 @@ router.post('/', passport.authenticate('jwt', { session: false }), (req, res)=> 
 
 // Get profile by handle
 // api/profile/handle/:handle
+// public route
 router.get('/handle/:handle', (req, res)=>{
     Profile.findOne({ handle: req.params.handle })
     .populate('user', ['name', 'avatar'])
@@ -104,6 +108,7 @@ router.get('/handle/:handle', (req, res)=>{
 
 // Get profile by userId
 // api/profile/user/:user_id
+// public route
 router.get('/user/:user_id', (req, res)=>{
     Profile.findOne({ user: req.params.user_id })
     .populate('user', ['name', 'avatar'])
@@ -122,6 +127,7 @@ router.get('/user/:user_id', (req, res)=>{
 
 // Get all profiles
 // api/profile/all
+// public route
 router.get('/all', (req, res)=>{
     Profile.find()
     .populate('user', ['name', 'avatar'])
@@ -140,6 +146,7 @@ router.get('/all', (req, res)=>{
 
 // Add experience to the profile
 // api/profile/experience
+// private route
 router.post('/experience', passport.authenticate('jwt', { session: false }), (req, res)=> {
     const { errors, isValid } = validateExperienceInput(req.body)
 
@@ -168,6 +175,7 @@ router.post('/experience', passport.authenticate('jwt', { session: false }), (re
 
 // Add education to the profile
 // api/profile/education
+// private route
 router.post('/education', passport.authenticate('jwt', { session: false }), (req, res)=> {
     const { errors, isValid } = validateEducationInput(req.body)
 
@@ -191,6 +199,52 @@ router.post('/education', passport.authenticate('jwt', { session: false }), (req
         profile.education.unshift(newEdu)
         profile.save()
             .then(profile => res.json(profile))
+        })
+})
+
+// Delete experience from the profile
+// api/profile/experience/exp_id
+// private route
+router.delete('/experience/:exp_id', passport.authenticate('jwt', { session: false }), (req, res)=> {
+
+    Profile.findOne({ user: req.user.id }).then(profile => {
+        const removeIndex = profile.experiences
+            .map(item => item.id)
+            .indexOf(req.params.exp_id)
+        if(removeIndex === -1) return res.status(404).json({experience: "Not found"})
+        profile.experiences.splice(removeIndex, 1)
+        profile.save()
+            .then(profile => res.json(profile))
+            .catch(err => res.status(404).json(err))
+    })
+})
+
+// Delete education from the profile
+// api/profile/education/edu_id
+// private route
+router.delete('/education/:edu_id', passport.authenticate('jwt', { session: false }), (req, res)=> {
+
+    Profile.findOne({ user: req.user.id }).then(profile => {
+        const removeIndex = profile.education
+            .map(item => item.id)
+            .indexOf(req.params.edu_id)
+        if(removeIndex === -1) return res.status(404).json({education: "Not found"})
+        profile.education.splice(removeIndex, 1)
+        profile.save()
+            .then(profile => res.json(profile))
+            .catch(err => res.status(404).json(err))
+    })
+})
+
+// Delete User and Profile
+// api/profile
+// private route
+router.delete('/', passport.authenticate('jwt', { session: false }), (req, res)=> {
+    mongoose.set('useFindAndModify', false);
+    Profile.findOneAndRemove({ user: req.user.id })
+        .then(() => {
+            User.findOneAndRemove({ _id: req.user.id })
+            .then(()=> res.json({ msg: "success"}))
         })
 })
 
