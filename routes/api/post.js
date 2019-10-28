@@ -33,4 +33,13 @@ router.post('/',passport.authenticate('jwt', { session: false }), (req, res) => 
 
 })
 
+// Get all posts
+// public
+router.get('/', (req, res) => {
+    Post.find()
+        .sort({ date: -1 }) // newest posts first
+        .then(posts => res.json(posts))
+        .catch(err => console.log(err))
+})
+
 module.exports = router;
