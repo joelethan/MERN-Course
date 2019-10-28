@@ -42,4 +42,12 @@ router.get('/', (req, res) => {
         .catch(err => console.log(err))
 })
 
+// Get a post
+// public
+router.get('/:id', (req, res) => {
+    Post.findById(req.params.id)
+        .then(post => res.json(post))
+        .catch(err => res.status(404).json({errors:'Post not found'}))
+})
+
 module.exports = router;
