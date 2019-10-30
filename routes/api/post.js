@@ -13,7 +13,7 @@ const validatePostInput = require('../../validation/post')
 // Test route
 // api/post/test
 // public
-router.get('/test', (req, res)=> res.json({msg: 'Working posts'}))
+router.get('/test', (req, res) => res.json({msg: 'Working posts'}))
 
 // Create post
 // api/post
@@ -66,7 +66,7 @@ router.delete('/:id', passport.authenticate('jwt', { session: false }), (req, re
                     if(post.user.toString() !== profile.user.toString()) {
                         return res.status(401).json({ notauthorised: 'User not authorised'})
                     }
-                    post.remove().then(()=> res.json({msg: 'Deleted successfully'}))
+                    post.remove().then(() => res.json({msg: 'Deleted successfully'}))
                 })
                 .catch(() => res.status(404).json({nopost: 'Post not found'}))
             })
@@ -113,7 +113,7 @@ router.post('/unlike/:id', passport.authenticate('jwt', { session: false }), (re
                     
                     // Remove the user id from the likes array
                     post.likes.splice(removeIndex, 1)
-                    post.save().then(post=>res.json(post))
+                    post.save().then(post => res.json(post))
                     
                 })
                 .catch(() => res.status(404).json({nopost: 'Post not found'}))
@@ -132,7 +132,7 @@ router.post('/comment/:id', passport.authenticate('jwt', { session: false }), (r
     }
 
     Post.findById(req.params.id)
-        .then(post=>{
+        .then(post => {
             const newComment = {
                 text: req.body.text,
                 name: req.body.name,
@@ -141,7 +141,31 @@ router.post('/comment/:id', passport.authenticate('jwt', { session: false }), (r
             }
             // Add to comments array
             post.comments.unshift(newComment)
-            post.save().then(post=>res.json(post))
+            post.save().then(post => res.json(post))
+        })
+        .catch(() => res.status(404).json({nopost: 'Post not found'}))
+})
+
+// Delete a comment from a post
+// api/post/comment/:id/:commment_id
+// private
+router.delete('/comment/:id/:commment_id', passport.authenticate('jwt', { session: false }), (req, res) => {
+
+    Post.findById(req.params.id)
+        .then(post => {
+            
+            if(post.comments.filter(comment => comment._id.toString() === req.params.commment_id).length === 0){
+                return res.status(404).json({ errors: "Comment does not exist"})
+            }
+            // Get remove Index
+            const removeIndex = post.comments
+                .map(item => item._id.toString())
+                .indexOf(req.params.commment_id)
+            
+            // Remove the comment from the array
+            post.comments.splice(removeIndex, 1)
+            post.save().then(post => res.json(post))
+            
         })
         .catch(() => res.status(404).json({nopost: 'Post not found'}))
 })
