@@ -52,7 +52,7 @@ router.get('/', (req, res) => {
 router.get('/:id', (req, res) => {
     Post.findById(req.params.id)
         .then(post => res.json(post))
-        .catch(err => res.status(404).json({errors:'Post not found'}))
+        .catch(() => res.status(404).json({errors:'Post not found'}))
 })
 
 // Get a post
@@ -68,7 +68,7 @@ router.delete('/:id', passport.authenticate('jwt', { session: false }), (req, re
                     }
                     post.remove().then(()=> res.json({msg: 'Deleted successfully'}))
                 })
-                .catch(err => res.status(404).json({nopost: 'Post not found'}))
+                .catch(() => res.status(404).json({nopost: 'Post not found'}))
             })
 })
 
@@ -89,7 +89,34 @@ router.post('/like/:id', passport.authenticate('jwt', { session: false }), (req,
                     post.likes.unshift({ user: req.user.id })
                     post.save().then(post => res.json(post))
                 })
-                .catch(err => res.status(404).json({nopost: 'Post not found'}))
+                .catch(() => res.status(404).json({nopost: 'Post not found'}))
+            })
+})
+
+// Unlike a post
+// api/post/unlike/:id
+// private
+router.post('/unlike/:id', passport.authenticate('jwt', { session: false }), (req, res) => {
+    Profile.findOne({user: req.user.id})
+        .then(profile => {
+            if(!profile) return res.status(404).json({noprofile: 'Profile not found'})
+            Post.findOne({_id: req.params.id})
+                .then(post => {
+                    console.log(post.likes.filter(like => like.user.toString() === req.user.id).length);
+                    if(post.likes.filter(like => like.user.toString() === req.user.id).length === 0){
+                        return res.status(400).json({ notliked: 'User has not liked this post'})
+                    }
+                    // Index to remove
+                    const removeIndex = post.likes
+                        .map(like => like.user)
+                        .indexOf(req.user.id)
+                    
+                    // Remove the user id from the likes array
+                    post.likes.splice(removeIndex, 1)
+                    post.save().then(post=>res.json(post))
+                    
+                })
+                .catch(() => res.status(404).json({nopost: 'Post not found'}))
             })
 })
 
