@@ -120,7 +120,7 @@ router.get('/user/:user_id', (req, res)=>{
         }
         res.json(profile)
     })
-    .catch(err => {
+    .catch(() => {
         res.status(404).json({noprofile: 'There is no profile for this user'})
     })
 })
@@ -139,7 +139,7 @@ router.get('/all', (req, res)=>{
         }
         res.json(profiles)
     })
-    .catch(err => {
+    .catch(() => {
         res.status(404).json({noprofile: 'There is no profiles'})
     })
 })
