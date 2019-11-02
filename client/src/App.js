@@ -8,6 +8,7 @@ function App() {
       <header className="App-header">
         <h1>My react App</h1>
         <Button variant="success">Success</Button>
+        <i className="fas fa-camera"></i>
       </header>
     </div>
   );
