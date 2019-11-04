@@ -1,15 +1,16 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
 import './App.css';
+import Navbar from './components/layout/Navbar';
+import Footer from './components/layout/Footer';
+import Landing from './components/layout/Landing';
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <h1>My react App</h1>
-        <Button variant="success">Success</Button>
-        <i className="fas fa-camera"></i>
-      </header>
+    <Navbar/>
+    <Landing/>
+    <Footer/>
     </div>
   );
 }
