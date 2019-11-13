@@ -76,7 +76,7 @@ class Register extends Component {
                         placeholder="Password" name="password"
                         value={this.state.password}
                         onChange={this.onChange} />
-                        {errors.password && (<div className="invalid-feedback">{ errors.password2 }</div>)}
+                        {errors.password && (<div className="invalid-feedback">{ errors.password }</div>)}
                         </div>
                         <div className="form-group">
                         <input type="password" className={classnames("form-control form-control-lg",{
