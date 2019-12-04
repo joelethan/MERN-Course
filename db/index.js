@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const DB_URI = 'mongodb://localhost:27017/myappde';
+const DB_URI = 'mongodb://localhost:27017/myapp';
 const app = require('../server');
 
 const PORT = process.env.PORT || 5000;
