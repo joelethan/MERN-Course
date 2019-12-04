@@ -16,9 +16,12 @@ module.exports = passport =>{
             .then(user=>{
                 if(user){
                     return done(null, user)
-                }
+                }/* istanbul ignore next */
                 return done(null, false)
             })
-            .catch(err => console.log(err))
+            .catch(
+                /* istanbul ignore next */
+                err => console.log(err)
+                )
     }))
 }

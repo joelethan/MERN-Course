@@ -9,6 +9,7 @@
     "test": "nyc mocha test/*.test.js --timeout 20000 --exit",
     "coverage": "nyc report --reporter=lcov --reporter=text",
     "coveralls": "npm run coverage && cat ./coverage/lcov.info | coveralls",
+    "cov": "npm run test &&  npm run coveralls",
     "client-install": "npm install --prefic client",
     "client": "npm start --prefix client",
     "dev": "concurrently \"npm run server\" \"npm run client\""
