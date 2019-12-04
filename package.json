@@ -7,12 +7,8 @@
     "start": "node server",
     "server": "nodemon start",
     "test": "nyc mocha test/*.test.js --timeout 20000 --exit",
-    "cov": "nyc report --reporter=html",
-    "coverage": "npm run test && cat ./coverage/lcov.info | coveralls",
-
-    "test1": "mocha --recursive --timeout 30000 --exit",
-    "coveralls1": "nyc report --reporter=lcov --reporter=text",
-    "coverage1": "nyc report --reporter=text-lcov | coveralls",
+    "coverage": "nyc report --reporter=lcov --reporter=text",
+    "coveralls": "npm run coverage && cat ./coverage/lcov.info | coveralls",
     "client-install": "npm install --prefic client",
     "client": "npm start --prefix client",
     "dev": "concurrently \"npm run server\" \"npm run client\""
