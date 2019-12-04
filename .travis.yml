@@ -2,10 +2,7 @@ language:
   - node_js
 node_js:
   - '11'
-services:
-  - mongodb
-before_script:
-  - sleep 15
-  - mongo mydb_test --eval 'db.createUser({user:"travis",pwd:"test",roles:["readWrite"]});'
 script:
   - npm test
+after_script:
+  - npm run coveralls
